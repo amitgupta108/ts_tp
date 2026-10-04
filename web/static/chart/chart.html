@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  	<meta charset="UTF-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<title>Minimalist Movable & Resizable Window</title>
+	<link rel="stylesheet" href="./chart.css">
+	<script src="https://unpkg.com/openalgo-charts@2.6.0/dist/openalgo-charts.mjs"></script>
+	<script type="module" src="./chart.js"></script>
+
+</head>
+<body>
+
+  <button id="openBtn">Open Window</button>
+
+  <!-- The Modal Window -->
+  <div id="myModal" class="resizable-window">
+	<div id="modalHeader" class="window-header">
+	  <span class="window-title">Minimalist Browser</span>
+	  <button id="closeBtn" class="close-btn">&times;</button>
+	</div>
+	<div id="chart" class="window-body">
+	</div>
+  </div>
+
+  <script>
+	const modal = document.getElementById('myModal');
+	const openBtn = document.getElementById('openBtn');
+	const closeBtn = document.getElementById('closeBtn');
+	const modalHeader = document.getElementById('modalHeader');
+
+	// 1. Toggle Visibility
+	openBtn.addEventListener('click', () => {
+	  modal.style.display = 'flex';
+	});
+
+	closeBtn.addEventListener('click', () => {
+	  modal.style.display = 'none';
+	});
+
+	// 2. Dragging Logic
+	let isDragging = false;
+	let currentX;
+	let currentY;
+	let initialX;
+	let initialY;
+	let xOffset = 0;
+	let yOffset = 0;
+
+	modalHeader.addEventListener('mousedown', dragStart);
+	document.addEventListener('mousemove', drag);
+	document.addEventListener('mouseup', dragEnd);
+
+	function dragStart(e) {
+	  // Initialize dragging offsets relative to the window's current style positions
+	  initialX = e.clientX - xOffset;
+	  initialY = e.clientY - yOffset;
+
+	  // Only drag if the header itself is clicked (not the close button)
+	  if (e.target === modalHeader || modalHeader.contains(e.target)) {
+		if (e.target !== closeBtn) {
+		  isDragging = true;
+		}
+	  }
+	}
+
+	function drag(e) {
+	  if (isDragging) {
+		e.preventDefault();
+		
+		// Calculate how far the mouse has traveled
+		currentX = e.clientX - initialX;
+		currentY = e.clientY - initialY;
+
+		xOffset = currentX;
+		yOffset = currentY;
+
+		// Apply transformations using translate3d for smooth hardware-accelerated movements
+		modal.style.transform = `translate3d(${currentX}px, ${currentY}px, 0px)`;
+	  }
+	}
+
+	function dragEnd() {
+	  isDragging = false;
+	}
+  </script>
+</body>
+</html>
